@@ -80,3 +80,24 @@ Medical-Insurance-Tracker/
 │   ├── exception/                  # Custom exception handling
 │   └── utils.py                    # Utility functions
 └── artifacts/                      # Stores outputs like models, transformed data
+
+🚀 Getting Started
+1. Clone the repository
+bash
+Copy
+Edit
+git clone https://github.com/yourusername/Medical-Insurance-Tracker.git
+cd Medical-Insurance-Tracker
+2. Install Dependencies
+bash
+Copy
+Edit
+pip install -r requirements.txt
+3. Start MongoDB Server (if local)
+Ensure MongoDB is running locally or update MongoClient URI in the code for Atlas or remote DB.
+
+4. Run the project
+bash
+Copy
+Edit
+python main.py
