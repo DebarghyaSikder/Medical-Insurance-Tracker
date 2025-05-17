@@ -1,4 +1,3 @@
-
 from Insurance import utils
 from Insurance.entity import config_entity
 from Insurance.entity import artifact_entity
@@ -9,7 +8,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 
-class DataIngestion:    # data divided into train and test and validate
+class DataIngestion:
     
     def __init__(self,data_ingestion_config:config_entity.DataIngestionConfig ):
         try:
@@ -27,8 +26,8 @@ class DataIngestion:    # data divided into train and test and validate
 
             logging.info("Save data in feature store")
 
-            #replace na with Nan
-            df.replace(to_replace="na",value=np.NAN,inplace=True)
+            #replace na with NaN
+            df.replace(to_replace="na", value=np.nan, inplace=True)
 
             #Save data in feature store
             logging.info("Create feature store folder if not available")
@@ -66,5 +65,3 @@ class DataIngestion:    # data divided into train and test and validate
 
         except Exception as e:
             raise InsuranceException(error_message=e, error_detail=sys)
-
-
