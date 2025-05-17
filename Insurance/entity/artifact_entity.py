@@ -16,3 +16,16 @@ class DataTransformationArtifact:
     transformed_train_path:str
     transformed_test_path:str
     target_encoder_path:str
+    
+@dataclass
+class ModelTrainerArtifact:
+    model_path:str
+    r2_train_score:float
+    r2_test_score:float
+    
+    
+@dataclass    
+class ModelEvaluationArtifact:
+    is_model_accepted:bool
+    improved_accuracy:float
+     
