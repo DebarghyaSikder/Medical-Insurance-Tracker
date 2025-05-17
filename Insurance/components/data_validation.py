@@ -100,7 +100,7 @@ class DataValidation:
         try:
             logging.info(f"Reading base dataframe")
             base_df = pd.read_csv(self.data_validation_config.base_file_path)
-            base_df.replace({"na":np.NAN},inplace=True)
+            base_df.replace({"na":np.nan},inplace=True)
             logging.info(f"Replace na value in base df")
             #base_df has na as null
             logging.info(f"Drop null values colums from base df")
