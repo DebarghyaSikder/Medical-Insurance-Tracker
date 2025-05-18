@@ -27,6 +27,7 @@ class ModelResolver:
         """
         try:
             dir_name= os.listdir(self.model_registry)
+            print("Available dirs in model_registry:", dir_name)
             if len(dir_name) == 0:
                 return None
             
@@ -51,8 +52,8 @@ class ModelResolver:
         try:
             latest_dir=self.get_latest_dir_path()
             if latest_dir is None:
-                raise Exception("Transform data is not available")
-            return os.path.join(latest_dir, self.target_encoder_dir_name, TARGET_ENCODER_OBJECT_FILE_NAME)
+                raise Exception("Transformer data is not available")
+            return os.path.join(latest_dir, self.transformer_dir_name, TRANSFORMER_OBJECT_FILE_NAME)
         except Exception as e:
             raise e
     
@@ -61,7 +62,7 @@ class ModelResolver:
             latest_dir=self.get_latest_dir_path()
             if latest_dir is None:
                 raise Exception("Target encoder data is not available")
-            return os.path.join(latest_dir, self.transformer_dir_name, TRANSFORMER_OBJECT_FILE_NAME)
+            return os.path.join(latest_dir, self.target_encoder_dir_name, TARGET_ENCODER_OBJECT_FILE_NAME)
 
         except Exception as e:
             raise e 
@@ -101,4 +102,28 @@ class ModelResolver:
             return os.path.join(latest_dir, self.target_encoder_dir_name, TARGET_ENCODER_OBJECT_FILE_NAME) # target_encoder.pkl
         except Exception as e:
             raise e
-                
+    
+    def get_next_version_dir_path(self):
+    # """
+    # Get the next versioned directory path for saving a new model.
+    # """
+        try:
+            dir_names = os.listdir(self.model_registry)
+            if len(dir_names) == 0:
+                return os.path.join(self.model_registry, "0")
+            dir_names = list(map(int, dir_names))
+            next_dir = max(dir_names) + 1
+            return os.path.join(self.model_registry, f"{next_dir}")
+        except Exception as e:
+            raise e            
+        
+    
+    
+    def get_next_save_model_path(self):
+        return os.path.join(self.get_next_version_dir_path(), self.model_dir_name, MODEL_FILE_NAME)
+
+    def get_next_save_transformer_path(self):
+        return os.path.join(self.get_next_version_dir_path(), self.transformer_dir_name, TRANSFORMER_OBJECT_FILE_NAME)
+
+    def get_next_save_target_encoder_path(self):
+        return os.path.join(self.get_next_version_dir_path(), self.target_encoder_dir_name, TARGET_ENCODER_OBJECT_FILE_NAME)    
