@@ -6,6 +6,7 @@ import os,sys
 from sklearn.pipeline import Pipeline
 import pandas as pd
 from Insurance import utils
+from Insurance.utils import load_object
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 #from imblearn.combine import SMOTETomek
@@ -44,5 +45,57 @@ class ModelEvaluation:
                 logging.info(f"Model evaluation artifact: {model_eval_artifact}")
                 return model_eval_artifact
             
+            # Finding location of previuos model
+            transformer_path=self.model_resolver.get_latest_transformer_path()
+            model_path=self.model_resolver.get_latest_model_path()
+            target_encoder_path=self.model_resolver.get_latest_target_encoder_path()
+            
+            # Loading the previous model
+            transformer=load_object(file_path=transformer_path)
+            model=load_object(file_path=model_path)
+            target_encoder=load_object(file_path=target_encoder_path) # Target encoder
+            
+            # New model
+            current_transformer=load_object(file_path=self.data_transformation_artifact.transform_object_path)
+            current_model=load_object(file_path=self.model_trainer_artifact.model_path)
+            current_target_encoder=load_object(file_path=self.data_transformation_artifact.target_encoder_path)
+            
+            test_df=pd.read_csv(self.data_ingestion_artifact.test_file_path)
+            target_df=test_df[TARGET_COLUMN]
+            y_true=target_df
+            
+            
+            input_features_name=list(transformer.feature_names_in_)
+            for i in input_features_name:
+                if test_df[i].dtypes=='object':
+                    test_df[i]=target_encoder.fit_transform(test_df[i])
+                    
+            input_arr=transformer.transform(test_df[input_features_name])
+            y_pred=model.predict(input_arr)
+            
+            # Comparison between new model and old model
+            
+            previous_model_score=r2_score(y_true=y_true, y_pred=y_pred)
+            
+            # New model accuracy
+            input_feature_name=list(current_transformer.feature_names_in_)     
+            input_arr=current_transformer.transform(test_df[input_feature_name])
+            y_pred=current_model.predict(input_arr)
+            y_true=target_df
+            
+            current_model_score=r2_score(y_true=y_true, y_pred=y_pred)
+            
+            # Final comparison between new and old model
+            if current_model_score<=previous_model_score:
+                logging.info(f"Current model is not better than previous model")
+                raise Exception(f"Current model is not better than previous model")  
+            
+            model_eval_artifact=artifact_entity.ModelEvaluationArtifact(is_model_accepted=True, 
+                                                                        improved_accuracy=current_model_score-previous_model_score) 
+            return model_eval_artifact
+            
         except Exception as e:
             raise InsuranceException(e, sys)    
+        
+# We can store in S3 bucket in AWS
+# Model pusher in database        

@@ -18,6 +18,7 @@ class ModelResolver:
         os.makedirs(self.model_registry, exist_ok=True)
         self.transformer_dir_name = transformer_dir_name
         self.model_dir_name = model_dir_name
+        self.target_encoder_dir_name = target_encoder_dir_name
         
         
     def get_latest_dir_path(self):
@@ -82,7 +83,7 @@ class ModelResolver:
     def get_latest_save_model_path(self):
         
         try:
-            latest_dir=self.get_latest_save_model_path()
+            latest_dir=self.get_latest_save_dir_path()
             return os.path.join(latest_dir, self.model_dir_name, MODEL_FILE_NAME) # pkl
         except Exception as e:
             raise e    
